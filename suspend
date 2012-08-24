@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# 2012 Doug McNish
+# License: GPL, http://www.gnu.org/copyleft/gpl.html
+[ -z $ON_HOLD_PROJECT ] && ON_HOLD_PROJECT="+SUSPENDED"
+
+# Stop Verbose lines, thanks to Mark Harrison
+TODOTXT_VERBOSE=0
+
+# what are we doing?
+action=$1
+shift
+
+[ "$action" = "usage" ] && {
+    echo "    $(basename $0) [TERM...]"
+    echo "      Suspend a task." 
+    echo "      Simply appends \"+SUSPENDED\" to a task."
+    echo ""
+    exit
+}
+
+case $action in 
+
+suspend|sus)
+    errmsg="usage: $TODO_SH suspend ITEM#"
+    item=$1; shift
+    getTodo "$item"
+
+    appendspace=" "
+    cleaninput "for sed"
+
+    if sed -i.bak $item" s|^.*|&${appendspace}${ON_HOLD_PROJECT}|" "$TODO_FILE"; then
+     if [ $TODOTXT_VERBOSE -gt 0 ]; then
+         getNewtodo "$item"
+         echo "$item $newtodo"
+    fi
+    else
+     die "TODO: Error appending task $item."
+    fi
+    ;;
+esac
+
+
+
+
+
